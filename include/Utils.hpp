@@ -24,6 +24,20 @@
 		  reasonable ways as different from the original version.
 */
 
-#include "App.hpp"
+#ifndef _STACK_TODO_LISTE_UTILS_HPP
+#define _STACK_TODO_LISTE_UTILS_HPP
 
-int main() { return App::HauptLogik(); };
+#include <ctime>
+#include <string>
+
+namespace Utils {
+	extern time_t Unixzeit;
+
+	const std::string DatumZeit();
+	uint8_t MaximaleTage(const uint8_t Monat, const uint16_t Jahr);
+
+	std::string Keyboard(const size_t Laenge, const std::string &Text);
+	int Numpad(const size_t Laenge, const std::string &Text, int AlterWert);
+};
+
+#endif

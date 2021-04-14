@@ -41,7 +41,6 @@ namespace GFX {
 	extern C2D_SpriteSheet Sprites;
 	void AufgabenBlock(const AufgabenListe &Aufgabe, const uint8_t YPos);
 	void DrawBasis(const bool Bildschirm);
-	std::string Keyboard(const size_t Laenge, const std::string &Text);
 };
 
 #endif

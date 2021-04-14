@@ -39,6 +39,10 @@ struct AufgabenListe {
 	std::string Titel = "";
 	std::string Beschreibung = "";
 	bool Erledigt = false;
+	uint8_t Tag = 1;
+	uint8_t Monat = 1;
+	uint16_t Jahr = 2000; // 65535 / 65536 (uint16_t) sollte genug sein.
+	bool ZeitBeinhaltet = false;
 };
 
 class AufgabenListeCore {
@@ -52,6 +56,9 @@ public:
 	std::string Titel(const size_t Index) const;
 	std::string Beschreibung(const size_t Index) const;
 	bool Erledigt(const size_t Index) const;
+	uint8_t Tag(const size_t Index) const;
+	uint8_t Monat(const size_t Index) const;
+	uint16_t Jahr(const size_t Index) const;
 	AufgabenListe Aufgabe(const size_t Index) const;
 
 	/* Utilities */

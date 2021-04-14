@@ -25,6 +25,7 @@
 */
 
 #include "Core.hpp"
+#include "Utils.hpp"
 #include <unistd.h> // Für den Existenz Check der JSON Datei.
 
 /*
@@ -51,7 +52,7 @@ void AufgabenListeCore::LadeListe(const std::string &Liste) {
 
 	/* Initialisiere die eigentliche Aufgaben-Liste. */
 	for(auto It = this->AufgabenJSON.begin(); It != this->AufgabenJSON.end(); ++It) {
-		AufgabenListe Aufgabe = { "", "", false };
+		AufgabenListe Aufgabe = { "", "", false, 1, 1, 2000, false };
 
 		Aufgabe.Titel = It.key();
 		if (this->AufgabenJSON[It.key()].contains("Beschreibung") && this->AufgabenJSON[It.key()]["Beschreibung"].is_string()) {
@@ -60,6 +61,25 @@ void AufgabenListeCore::LadeListe(const std::string &Liste) {
 
 		if (this->AufgabenJSON[It.key()].contains("Erledigt") && this->AufgabenJSON[It.key()]["Erledigt"].is_boolean()) {
 			Aufgabe.Erledigt = this->AufgabenJSON[It.key()]["Erledigt"];
+		}
+
+		if (this->AufgabenJSON[It.key()].contains("Monat") && this->AufgabenJSON[It.key()]["Monat"].is_number()) {
+			Aufgabe.Monat = this->AufgabenJSON[It.key()]["Monat"];
+			if (Aufgabe.Monat > 12) Aufgabe.Monat = 12; // Nur 12 Monate existieren.
+		}
+
+		if (this->AufgabenJSON[It.key()].contains("Jahr") && this->AufgabenJSON[It.key()]["Jahr"].is_number()) {
+			Aufgabe.Jahr = this->AufgabenJSON[It.key()]["Jahr"];
+			if (Aufgabe.Jahr > 2050) Aufgabe.Jahr = 2050; // 2050 ist das maximale Jahr beim 3DS.
+		}
+
+		if (this->AufgabenJSON[It.key()].contains("Tag") && this->AufgabenJSON[It.key()]["Tag"].is_number()) {
+			Aufgabe.Tag = this->AufgabenJSON[It.key()]["Tag"];
+			if (Aufgabe.Tag > Utils::MaximaleTage(Aufgabe.Monat, Aufgabe.Jahr)) Aufgabe.Tag = Utils::MaximaleTage(Aufgabe.Monat, Aufgabe.Jahr);
+		}
+
+		if (this->AufgabenJSON[It.key()].contains("Zeitbeinhaltet") && this->AufgabenJSON[It.key()]["Zeitbeinhaltet"].is_boolean()) {
+			Aufgabe.ZeitBeinhaltet = this->AufgabenJSON[It.key()]["Zeitbeinhaltet"];
 		}
 
 		this->Aufgaben.push_back(Aufgabe); // Füge die Aufgabe zu den Aufgaben hinzu.
@@ -111,6 +131,35 @@ bool AufgabenListeCore::Erledigt(const size_t Index) const {
 	return false;
 };
 
+/*
+	Erhalte den Tag einer Aufgabe.
+
+	const size_t Index: Der Index der Aufgabe.
+*/
+uint8_t AufgabenListeCore::Tag(const size_t Index) const {
+	if (Index < this->AufgabenAnzahl() && this->ListeGut) return this->Aufgaben[Index].Tag;
+	return 1;
+};
+
+/*
+	Erhalte den Monat einer Aufgabe.
+
+	const size_t Index: Der Index der Aufgabe.
+*/
+uint8_t AufgabenListeCore::Monat(const size_t Index) const {
+	if (Index < this->AufgabenAnzahl() && this->ListeGut) return this->Aufgaben[Index].Monat;
+	return 1;
+};
+
+/*
+	Erhalte das Jahr einer Aufgabe.
+
+	const size_t Index: Der Index der Aufgabe.
+*/
+uint16_t AufgabenListeCore::Jahr(const size_t Index) const {
+	if (Index < this->AufgabenAnzahl() && this->ListeGut) return this->Aufgaben[Index].Jahr;
+	return 2000;
+};
 
 /*
 	Erhalte eine komplette Aufgabe.
@@ -157,8 +206,26 @@ void AufgabenListeCore::Addiere(const AufgabenListe &Aufgabe) {
 	if (this->ListeGut) {
 		this->Aufgaben.push_back(Aufgabe);
 
-		nlohmann::json Objekt = {{ "Beschreibung", Aufgabe.Beschreibung }, { "Erledigt", Aufgabe.Erledigt }};
-		this->AufgabenJSON.push_back({ Aufgabe.Titel, Objekt });
+		if (Aufgabe.ZeitBeinhaltet) {
+			nlohmann::json Objekt = {
+				{ "Beschreibung", Aufgabe.Beschreibung },
+				{ "Erledigt", Aufgabe.Erledigt },
+				{ "Tag", Aufgabe.Tag },
+				{ "Monat", Aufgabe.Monat },
+				{ "Jahr", Aufgabe.Jahr },
+				{ "Zeitbeinhaltet", Aufgabe.ZeitBeinhaltet }
+			};
+
+			this->AufgabenJSON.push_back({ Aufgabe.Titel, Objekt });
+		} else {
+			nlohmann::json Objekt = {
+				{ "Beschreibung", Aufgabe.Beschreibung },
+				{ "Erledigt", Aufgabe.Erledigt },
+				{ "Zeitbeinhaltet", Aufgabe.ZeitBeinhaltet }
+			};
+
+			this->AufgabenJSON.push_back({ Aufgabe.Titel, Objekt });
+		}
 	}
 };
 

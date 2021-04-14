@@ -24,6 +24,15 @@
 		  reasonable ways as different from the original version.
 */
 
-#include "App.hpp"
+#ifndef _STACK_TODO_LISTE_ADDIER_MENU_HPP
+#define _STACK_TODO_LISTE_ADDIER_MENU_HPP
 
-int main() { return App::HauptLogik(); };
+#include "structs.hpp"
+#include <3ds.h>
+
+namespace AddierMenu {
+	void ZeichneMenu(void);
+	void MenuLogik(uint32_t Down, uint32_t Held, touchPosition Touch);
+};
+
+#endif

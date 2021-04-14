@@ -24,6 +24,16 @@
 		  reasonable ways as different from the original version.
 */
 
-#include "App.hpp"
+#ifndef _STACK_TODO_LISTE_AUFGABEN_LISTE_HPP
+#define _STACK_TODO_LISTE_AUFGABEN_LISTE_HPP
 
-int main() { return App::HauptLogik(); };
+#include "structs.hpp"
+#include <3ds.h>
+
+namespace Aufgabenliste {
+	void ZeichneListe(void);
+	void AufgabeEntfernen();
+	void ListenLogik(uint32_t Down, uint32_t Held);
+};
+
+#endif

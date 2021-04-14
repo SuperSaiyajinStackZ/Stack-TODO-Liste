@@ -40,7 +40,7 @@ void GFX::AufgabenBlock(const AufgabenListe &Aufgabe, const uint8_t YPos) {
 
 	/* Zeichne den Text für den Block. */
 	Gui::DrawStringCentered(0, YPos + 5, 0.6f, TEXT_FARBE, Aufgabe.Titel, BOX_BREITE - 20); // Titel.
-	Gui::DrawString(20 + 5, YPos + 28, 0.45f, TEXT_FARBE, Aufgabe.Beschreibung, BOX_BREITE - 10, BOX_HOEHE - 25, nullptr, C2D_WordWrap); // Beschreibung.
+	Gui::DrawString(20 + 5, YPos + 25, 0.45f, TEXT_FARBE, Aufgabe.Beschreibung, BOX_BREITE - 10, BOX_HOEHE - 25, nullptr, C2D_WordWrap); // Beschreibung.
 
 	/* Minus zum Entfernen. */
 	Gui::DrawSprite(GFX::Sprites, sprites_remove_idx, (20 + BOX_BREITE) - 24, YPos);
@@ -48,6 +48,15 @@ void GFX::AufgabenBlock(const AufgabenListe &Aufgabe, const uint8_t YPos) {
 	/* Zeichne den Erledigt Status. */
 	Gui::DrawSprite(GFX::Sprites, sprites_checkbox_idx, (20 + BOX_BREITE) - 24, YPos + (BOX_HOEHE - 24));
 	if (Aufgabe.Erledigt) Gui::DrawSprite(GFX::Sprites, sprites_mark_idx, (20 + BOX_BREITE) - 20, YPos + (BOX_HOEHE - 20));
+
+	if (Aufgabe.ZeitBeinhaltet) {
+		/* Zeige die Aufgaben-Zeit an. */
+		Gui::DrawStringCentered(0, YPos - 15, 0.4f, TEXT_FARBE, "Aufgaben-Zeit: Jahr: " +
+			std::to_string(Aufgabe.Jahr) +
+			", Monat: " + std::to_string(Aufgabe.Monat) +
+			", Tag: " + std::to_string(Aufgabe.Tag)
+		);
+	}
 };
 
 /*
@@ -60,25 +69,4 @@ void GFX::DrawBasis(const bool Bildschirm) {
 
 	Gui::Draw_Rect(0, 0, (Bildschirm ? 400 : 320), 20, BAR_FARBE);
 	Gui::Draw_Rect(0, 20, (Bildschirm ? 400 : 320), 220, BG_FARBE);
-};
-
-/*
-	Öffnet das System Keyboard, damit etwas eingegeben werden kann.
-
-	const size_t Laenge: Die Länge der Zeichen, die eingegeben werden können.
-	const std::string &Text: Der Hilfe-Text welcher angezeigt werden soll.
-*/
-std::string GFX::Keyboard(const size_t Laenge, const std::string &Text) {
-	C3D_FrameEnd(0);
-
-	SwkbdState Status;
-	swkbdInit(&Status, SWKBD_TYPE_NORMAL, 2, Laenge);
-	char Temp[Laenge + 1] = { 0 };
-	swkbdSetHintText(&Status, Text.c_str());
-	swkbdSetValidation(&Status, SWKBD_NOTBLANK_NOTEMPTY, SWKBD_FILTER_PROFANITY, 0);
-
-	SwkbdButton Result = swkbdInputText(&Status, Temp, sizeof(Temp));
-	Temp[Laenge] = '\0';
-
-	return (Result == SWKBD_BUTTON_CONFIRM ? Temp : "");
 };

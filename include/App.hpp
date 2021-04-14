@@ -24,6 +24,29 @@
 		  reasonable ways as different from the original version.
 */
 
-#include "App.hpp"
+#ifndef _STACK_TODO_LISTE_APP_HPP
+#define _STACK_TODO_LISTE_APP_HPP
 
-int main() { return App::HauptLogik(); };
+#include "Core.hpp"
+#include <memory>
+#include <string>
+
+namespace App {
+	enum class MenuTyp : uint8_t { Liste, UnterMenu, Addieren, Mitwirkende };
+
+	/* Variablen. */
+	extern MenuTyp Menutyp;
+	extern AufgabenListe Aufgabe;
+	extern std::unique_ptr<AufgabenListeCore> Aufgaben;
+	extern size_t Index, AufgabenIndex, MenuIndex;
+	extern bool AufgabeSelected, Verlassen;
+
+	/* Funktionen. */
+	void Initialisieren();
+	int HauptLogik();
+	void Beenden();
+	void Zeichnung();
+	void Logik();
+};
+
+#endif

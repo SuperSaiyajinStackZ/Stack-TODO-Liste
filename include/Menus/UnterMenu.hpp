@@ -24,6 +24,17 @@
 		  reasonable ways as different from the original version.
 */
 
-#include "App.hpp"
+#ifndef _STACK_TODO_LISTE_UNTER_MENU_HPP
+#define _STACK_TODO_LISTE_UNTER_MENU_HPP
 
-int main() { return App::HauptLogik(); };
+#include "structs.hpp"
+#include <3ds.h>
+
+namespace UnterMenu {
+	void ZeichneMenu(void);
+	void Leeren();
+	void MenuLogik(uint32_t Down, uint32_t Held, touchPosition Touch);
+	void MenuListenLogik(uint32_t Down, uint32_t Held, touchPosition Touch);
+};
+
+#endif

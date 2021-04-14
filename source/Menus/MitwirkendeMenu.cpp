@@ -25,5 +25,24 @@
 */
 
 #include "App.hpp"
+#include "GFX.hpp"
+#include "MitwirkendeMenu.hpp"
 
-int main() { return App::HauptLogik(); };
+static const Structs::ButtonPos MenuVerlassen = { 0, 0, 20, 20 };
+extern bool Klick(const Structs::ButtonPos Position, touchPosition Touch);
+
+void MitwirkendeMenu::ZeichneMenu() {
+	Gui::DrawStringCentered(0, 1, 0.55f, TEXT_FARBE, "Mitwirkende-Menü"); // Menü-Titel.
+	Gui::DrawSprite(GFX::Sprites, sprites_back_idx, 2, 1); // Zurück.
+
+	/* Mitwirkenden Text. */
+	Gui::DrawStringCentered(0, 35, 0.6f, TEXT_FARBE, "Entwickelt von SuperSaiyajinStackZ.");
+	Gui::DrawStringCentered(0, 60, 0.45f, TEXT_FARBE, "Universal-Team: Universal-Core.");
+
+	/* Bild von StackZ. */
+	Gui::DrawSprite(GFX::Sprites, sprites_stackz_idx, 100, 100);
+};
+
+void MitwirkendeMenu::MenuLogik(uint32_t Down, uint32_t Held, touchPosition Touch) {
+	if ((Down & KEY_B) || (Down & KEY_TOUCH && Klick(MenuVerlassen, Touch))) App::Menutyp = App::MenuTyp::UnterMenu; // Gehe zurück zum Unter-Menü.
+};
